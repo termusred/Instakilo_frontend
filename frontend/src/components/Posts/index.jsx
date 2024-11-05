@@ -15,8 +15,7 @@ function Posts() {
         headers: {
           Authorization: `Bearer ${token}`
         }
-      });
-      console.log("Fetched Posts:", response.data); // Log fetched posts
+      }); 
       setPosts(response.data);
     } catch (error) {
       console.error("Error fetching posts:", error);
@@ -24,9 +23,7 @@ function Posts() {
   };
 
   useEffect(() => {
-    setTimeout(() => {
-      fetchPosts().finally(() => setLoading(false));
-    }, 1000);
+    fetchPosts().finally(() => setLoading(false));
   }, []);
 
   if (loading) {
@@ -48,7 +45,6 @@ function Posts() {
       console.error("Error adding comment:", error);
     }
   };
-
   return (
     <div className="w-screen min-h-screen flex justify-center py-8">
       <ToastContainer />
@@ -61,9 +57,9 @@ function Posts() {
               style={{ minHeight: '700px' }}
             >
               <div className="w-full h-96 mb-4 overflow-hidden rounded-lg">
-                {post.media ? (
+                {post.media[0] ? (
                   <img
-                    src={"http:localhost:3000/images/" + post.media}
+                    src={`http://localhost:3000/images/${post.media[0]}`}
                     alt={post.title}
                     className="object-cover w-full h-full"
                     onError={() => console.error("Image failed to load:", post.media)} // Log on error

@@ -66,13 +66,15 @@ function Account() {
           </TabsHeader>
           <TabsBody>
           <TabPanel value="home">
-            <div className="p-4 flex flex-col overflow-scroll">
-              {posts.length > 0 ? (
+            <div className="p-4 flex overflow-scroll gap-4">
+              {posts? (
                 posts.map((el) => (
-                  <li key={el._id}>
+                  <div className="bg-blue-gray-100" key={el._id}>
+                    <button>
+                      <img src={`http://localhost:3000/images/${el.media[0]}`} alt="image not found" className=" size-16"/>
+                    </button>
                     <h2>{el.title}</h2>
-                    <p>{el.content}</p>
-                  </li>
+                  </div>
                 ))
               ) : (
                 <p>No posts available.</p>
