@@ -52,7 +52,7 @@ function Posts() {
           Authorization: `Bearer ${token}`
         }
       });
-      toast.success("Comment added successfully");
+      fetchPosts()
     } catch (error) {
       console.error("Error adding comment:", error);
     }

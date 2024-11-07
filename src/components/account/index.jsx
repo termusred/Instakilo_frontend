@@ -46,7 +46,7 @@ function Account() {
   }
 
   return (
-    <div className="h-screen w-screen flex flex-col">
+    <div className="h-screen w-screen flex flex-col mt-32">
       <div className="Profil_Upperpart mt-5 w-full h-1/2 flex items-center ml-52">
         <div className="avatarWrap w-56 flex justify-center">
           <Avatar
@@ -75,7 +75,7 @@ function Account() {
         </div>
       </div>
 
-      <div className="Profil_BottomPart flex-grow mt-10 w-full overflow-y-auto">
+      <div className="Profil_BottomPart flex-grow w-full overflow-y-auto mt-20">
         <Tabs value={activeTab} onChange={setActiveTab} className="w-full">
           <TabsHeader>
             <Tab value="home">Blogs</Tab>

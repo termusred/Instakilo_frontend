@@ -2,18 +2,21 @@ import { Typography, Input, Button } from "@material-tailwind/react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../../utils/axios";
+import { toast  , ToastContainer} from "react-toastify";
 
 function Blog() {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
-    const [media, setMedia] = useState([]);
-    
+    const [media, setMedia] = useState([]);    
 
     const navigate = useNavigate()
 
     const PostToDb = async () => {
-        if (!title || !content) {
-            console.error("Title and content are required");
+        const trimmedTitle = title.trim()
+        const trimmedContent = content.trim()
+
+        if(trimmedContent == "" || trimmedTitle == ""){
+            toast.error("bro you dumb? You cant use blank space as title nor content")
             return;
         }
     
@@ -40,6 +43,7 @@ function Blog() {
                 navigate("/");
             }
         } catch (error) {
+            toast.error("Buddy i think you are brain dead , maybe it is problem in me:(")
             console.error("Error fetching posts:", error);
         }
     };
@@ -58,6 +62,7 @@ function Blog() {
     
     return (
         <div className="w-screen h-screen mt-16 flex justify-center">
+            <ToastContainer/>
             <form className="w-72 flex flex-col gap-5 h-full overflow-y-auto" onSubmit={(e) => postThisShit(e)}>
                 <label htmlFor="title">Title</label>
                 <Input
@@ -97,7 +102,7 @@ function Blog() {
                     type="file"
                     placeholder="media of your blog"
                     className="w-full placeholder:opacity-100 focus:border-t-primary border-t-blue-gray-200"
-                    multiple // Allow multiple file selection
+                    multiple
                     labelProps={{
                         className: "hidden",
                     }}

@@ -42,7 +42,7 @@ const BlogPage = () => {
                   <img
                     src={`http://localhost:3000/images/${post.media[0]}`}
                     alt={post.title}
-                    className="object-cover w-full h-full"
+                    className="object-contain w-full h-full"
                   />
                 ) : (
                   <p>No image available</p>
