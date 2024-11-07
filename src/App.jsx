@@ -9,6 +9,7 @@ import NotFound from './components/NotFound/index.jsx';
 import Adder from './components/PostAdder/index.jsx';
 import Account from './components/account/index.jsx';
 import {Route , Routes , useNavigate} from "react-router-dom"
+import BlogPage from './components/BlogPage/index.jsx';
 
 function App() {
   const [route, setRoute] = useState([]);
@@ -30,6 +31,7 @@ function App() {
         {!localStorage.getItem("token") &&<Route path='/register' element={<Register/>}/>}
         <Route path='/post-blog' element={<Blog/>}/>
         <Route path='/account' element={<Account/>}/>
+        <Route path='/blog/:slug' element={<BlogPage/>}/>
         <Route path='*' element={<NotFound/>}/>
       </Routes>
     </>

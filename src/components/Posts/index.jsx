@@ -3,10 +3,15 @@ import api from "../../../utils/axios";
 import Loader from "../Loader/index.jsx";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from "react-router-dom";
+import Comment from "../comment/index.jsx";
 
 function Posts() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [commentsVisibility, setCommentsVisibility] = useState({});
+
+  const navigate = useNavigate()
 
   const fetchPosts = async () => {
     try {
@@ -15,13 +20,13 @@ function Posts() {
         headers: {
           Authorization: `Bearer ${token}`
         }
-      }); 
+      });
       setPosts(response.data);
     } catch (error) {
       console.error("Error fetching posts:", error);
     }
   };
-
+  
   useEffect(() => {
     fetchPosts().finally(() => setLoading(false));
   }, []);
@@ -30,12 +35,19 @@ function Posts() {
     return <Loader />;
   }
 
-  const LeaveComment = async (event, post) => {
+  const toggleComments = (postId) => {
+    setCommentsVisibility((prev) => ({
+      ...prev,
+      [postId]: !prev[postId]
+    }));
+  };
+
+  const LeaveComment = async (event, postId) => {
     event.preventDefault();
     const comment = event.target[0].value;
     try {
       const token = localStorage.getItem("token");
-      await api.post(`/posts/${post}/comments`, { content: comment }, {
+      await api.post(`/posts/${postId}/comments`, { content: comment }, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -45,6 +57,7 @@ function Posts() {
       console.error("Error adding comment:", error);
     }
   };
+
   return (
     <div className="w-screen min-h-screen flex justify-center py-8">
       <ToastContainer />
@@ -62,28 +75,26 @@ function Posts() {
                     src={`http://localhost:3000/images/${post.media[0]}`}
                     alt={post.title}
                     className="object-cover w-full h-full"
-                    onError={() => console.error("Image failed to load:", post.media)} // Log on error
                   />
                 ) : (
-                  <p>No image available</p> // Fallback if no media
+                  <p>No image available</p>
                 )}
               </div>
               <h2 className="text-xl font-semibold mb-4">{post.title}</h2>
-              <h3>{post.content}</h3>
-              <h3 className="text-lg font-medium">Comments</h3>
+              {post.content.length > 150 ? `${post.content.slice(0, 100)}...` : post.content}
+              <button onClick={() => toggleComments(post._id)}>
+                {commentsVisibility[post._id] ? "Hide comments" : "Check comments"}
+              </button>
+              {commentsVisibility[post._id] && <Comment data={post.comments} />}
               <ul className="mt-4 space-y-3">
-                {post.comments?.map((comment, index) => (
-                  <li
-                    key={index}
-                    className="border border-gray-300 p-3 rounded-lg"
-                  >
-                    {comment.content}
-                  </li>
-                ))}
+                <li className="border border-gray-300 p-3 rounded-lg"></li>
                 <form onSubmit={(event) => LeaveComment(event, post._id)}>
                   <input type="text" placeholder="Comment on this blog" required />
-                  <button type="submit" className="bg-blue-gray-100 p-2 rounded">Comment</button>
+                  <button type="submit" className="bg-blue-gray-100 p-2 rounded">
+                    Comment
+                  </button>
                 </form>
+                <button onClick={() => navigate("/blog/" + post.slug)}>Read more</button>
               </ul>
             </li>
           ))}

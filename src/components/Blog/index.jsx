@@ -1,46 +1,61 @@
 import { Typography, Input, Button } from "@material-tailwind/react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../../../utils/axios";
 
 function Blog() {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
-    const [media, setMedia] = useState(null); // Change to null for better handling
+    const [media, setMedia] = useState([]);
+    
+
+    const navigate = useNavigate()
 
     const PostToDb = async () => {
+        if (!title || !content) {
+            console.error("Title and content are required");
+            return;
+        }
+    
         try {
             const token = localStorage.getItem("token");
             const formData = new FormData();
             formData.append("title", title);
             formData.append("content", content);
-            if (media) {
+    
+            if (media.length > 0) {
                 for (let i = 0; i < media.length; i++) {
-                    formData.append("images", media[i]); // Append files
+                    formData.append("images", media[i]);
                 }
             }
-
+    
             const response = await api.post("/posts", formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
-                    "Content-Type": "multipart/form-data", // Set content type to multipart
+                    'Content-Type': 'multipart/form-data',
                 },
             });
-            console.log(response);
+    
+            if (response) {
+                navigate("/");
+            }
         } catch (error) {
             console.error("Error fetching posts:", error);
         }
-    }
-
+    };
+    
+    
     function postThisShit(e) {
         e.preventDefault();
-        setTitle(e.target[0].value);
-        setContent(e.target[1].value);
-        if (e.target[2].files.length) {
-            setMedia(e.target[2].files); // Use `files` instead of `value`
+        setTitle(e.target[0].value.trim());
+        setContent(e.target[1].value.trim());
+        if (e.target[2].files.length > 0) {
+            setMedia(Array.from(e.target[2].files));
         }
         PostToDb();
     }
-
+    
+    
     return (
         <div className="w-screen h-screen mt-16 flex justify-center">
             <form className="w-72 flex flex-col gap-5 h-full overflow-y-auto" onSubmit={(e) => postThisShit(e)}>
