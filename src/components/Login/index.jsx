@@ -3,17 +3,19 @@ import { useNavigate } from "react-router-dom";
 import api from "../../../utils/axios.js";
 import { Typography, Input, Button } from "@material-tailwind/react";
 import { EyeSlashIcon, EyeIcon } from "@heroicons/react/24/solid";
+import { toast , ToastContainer} from "react-toastify";
 
 export function Login() {
   const [passwordShown, setPasswordShown] = useState(false);
   const navigate = useNavigate();
   const togglePasswordVisiblity = () => setPasswordShown((cur) => !cur);
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const PostData = async () => {
+  const PostData = async (email , password) => {
     try {
+      if(email == "" || password == ""){
+        toast.error("Blank space cant be your password nor email")
+        return;
+      }
       const response = await api.post("/login", { email, password });
       const token = response.data.token;
 
@@ -22,20 +24,21 @@ export function Login() {
       navigate("/");
 
     } catch (error) {
-      console.log(error.message);
+      if(error.status){
+        toast.error("Make sure you wrote correct username and password")
+      }
     }
   };
 
   function handleLogin(e) {
     e.preventDefault();
-    setEmail(e.target[0].value);
-    setPassword(e.target[1].value);
 
-    PostData();
+    PostData(e.target[0].value , e.target[1].value);
   }
 
   return (
     <section className="grid text-center h-screen items-center p-8">
+      <ToastContainer/>
       <div>
         <Typography variant="h3" color="blue-gray" className="mb-2">
           Akkauntga kirish
@@ -54,6 +57,7 @@ export function Login() {
               </Typography>
             </label>
             <Input
+              required
               id="email"
               color="gray"
               size="lg"
@@ -76,6 +80,7 @@ export function Login() {
               </Typography>
             </label>
             <Input
+              required
               size="lg"
               name="password"
               placeholder="********"

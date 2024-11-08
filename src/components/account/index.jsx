@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Avatar, Tabs, TabsHeader, TabsBody, Tab, TabPanel } from "@material-tailwind/react";
 import api from "../../../utils/axios";
-import {useNavigate} from "react-router-dom"
+import {useNavigate , useParams} from "react-router-dom"
 import Loader from "../Loader";
 
 
@@ -16,14 +16,22 @@ import {
 
 function Account() {
   const [activeTab, setActiveTab] = useState("home");
+  const [account , setAccount] = useState([])
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  
+  const {userId} = useParams()
+  const token = localStorage.getItem("token")
 
   const navigate = useNavigate()
 
   const fetchPosts = async () => {
     try {
       const token = localStorage.getItem("token");
+      if(!token){
+        console.error("JWT token not found");
+        return;
+      }
       const response = await api.get("/posts/user", {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -35,9 +43,24 @@ function Account() {
     }
   };
 
+
+  const GetUser = async () => {
+    try {
+      const response = await api.get(`/users/${userId}` , {
+        headers:{
+          Authorization : `Bearer ${token}`
+        }
+      })
+      setAccount([response.data.data])
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   useEffect(() => {
     setTimeout(() => {
-      fetchPosts().finally(() => setLoading(false));
+      fetchPosts()
+      GetUser().finally(() => setLoading(false));
     }, 1000);
   }, []);
 
@@ -54,25 +77,31 @@ function Account() {
             className="h-36 w-36"
           />
         </div>
-        <div className="Text_part flex gap-7 flex-col">
-          <div className="actions flex gap-7 items-center">
-            <h2 className="username">Prashmandovki_uz</h2>
-            <button className="subscribe bg-blue-600 p-2 rounded">Follow</button>
-            <button className="dop bg-red-600 p-2 rounded text-white">Delete user</button>
-          </div>
-          <div className="counters flex gap-8">
-            <h3 className="blogsCount">212 blogs</h3>
-            <h3 className="subs">12 followers</h3>
-            <h3 className="subbedTo">12,031 followed</h3>
-          </div>
-          <div className="description">
-            <h3 className="job">Jobless</h3>
-            <h3 className="description max-w-36">
-              I don't care about the text written here; it is just a mindless lorem ipsum, so don't
-              even try to find any meaning in it.
-            </h3>
-          </div>
-        </div>
+        {account.map((el)=>{
+          return (
+            <div className="Text_part flex gap-7 flex-col">
+                <div className="actions flex gap-7 items-center">
+                  <h2 className="username">{el.username}</h2>
+                  <button className="subscribe bg-blue-600 p-2 rounded">change</button>
+                  <button className="dop bg-red-600 p-2 rounded text-white" onClick={(e)=> {
+                    e.stopPropagation()
+                    if(window.confirm("Do you want to log out?")){
+                      localStorage.removeItem("token")
+                      navigate("/register")
+                    }
+                  }}>Log out</button>
+                </div>
+              <div className="counters flex gap-8">
+                <h3 className="blogsCount">212 blogs</h3>
+                <h3 className="subs">12 followers</h3>
+                <h3 className="subbedTo">12,031 followed</h3>
+              </div>
+              <div className="description">
+                {el.description && <h3 className="description max-w-36">{el.description}</h3>}
+              </div>
+            </div>
+          )
+        })}
       </div>
 
       <div className="Profil_BottomPart flex-grow w-full overflow-y-auto mt-20">

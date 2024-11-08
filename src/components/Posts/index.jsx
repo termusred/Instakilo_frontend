@@ -4,7 +4,6 @@ import Loader from "../Loader/index.jsx";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from "react-router-dom";
-import Comment from "../comment/index.jsx";
 
 function Posts() {
   const [posts, setPosts] = useState([]);
@@ -16,6 +15,10 @@ function Posts() {
   const fetchPosts = async () => {
     try {
       const token = localStorage.getItem("token");
+      if(!token){
+        navigate("/register")
+        return;
+      }
       const response = await api.get("/posts", {
         headers: {
           Authorization: `Bearer ${token}`
@@ -35,28 +38,7 @@ function Posts() {
     return <Loader />;
   }
 
-  const toggleComments = (postId) => {
-    setCommentsVisibility((prev) => ({
-      ...prev,
-      [postId]: !prev[postId]
-    }));
-  };
 
-  const LeaveComment = async (event, postId) => {
-    event.preventDefault();
-    const comment = event.target[0].value;
-    try {
-      const token = localStorage.getItem("token");
-      await api.post(`/posts/${postId}/comments`, { content: comment }, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      fetchPosts()
-    } catch (error) {
-      console.error("Error adding comment:", error);
-    }
-  };
 
   return (
     <div className="w-screen min-h-screen flex justify-center py-8">
@@ -82,20 +64,7 @@ function Posts() {
               </div>
               <h2 className="text-xl font-semibold mb-4">{post.title}</h2>
               {post.content.length > 150 ? `${post.content.slice(0, 100)}...` : post.content}
-              <button onClick={() => toggleComments(post._id)}>
-                {commentsVisibility[post._id] ? "Hide comments" : "Check comments"}
-              </button>
-              {commentsVisibility[post._id] && <Comment data={post.comments} />}
-              <ul className="mt-4 space-y-3">
-                <li className="border border-gray-300 p-3 rounded-lg"></li>
-                <form onSubmit={(event) => LeaveComment(event, post._id)}>
-                  <input type="text" placeholder="Comment on this blog" required />
-                  <button type="submit" className="bg-blue-gray-100 p-2 rounded">
-                    Comment
-                  </button>
-                </form>
-                <button onClick={() => navigate("/blog/" + post.slug)}>Read more</button>
-              </ul>
+              <button onClick={() => navigate("/blog/" + post.slug)}>Read more</button>
             </li>
           ))}
         </ul>

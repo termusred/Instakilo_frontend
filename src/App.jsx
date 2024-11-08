@@ -13,25 +13,38 @@ import BlogPage from './components/BlogPage/index.jsx';
 
 function App() {
   const [route, setRoute] = useState([]);
+  const [show , setShow] = useState(false)
   const navigate = useNavigate()
 
   useEffect(()=>{
     setRoute(window.location.pathname)
+    if(token){
+      if(route != "/post-blog"){
+        setShow(true)
+      } 
+    } else if(!token){
+      setShow(false)
+    }
   }, [navigate])
 
+  const token = localStorage.getItem("token")
 
 
   return (
     <>
-      {route != "/login" && <Section/>}
-      {route != "/post-blog" && <Adder/>}
+      {route != "/login" && route != "/register" && <Section/>}
+      {show && <Adder/>}
       <Routes>
-        <Route path='/' element={<Posts/>}/>
-        {!localStorage.getItem("token") && <Route path='/login' element={<Login/>}/>}
-        {!localStorage.getItem("token") &&<Route path='/register' element={<Register/>}/>}
-        <Route path='/post-blog' element={<Blog/>}/>
-        <Route path='/account' element={<Account/>}/>
-        <Route path='/blog/:slug' element={<BlogPage/>}/>
+        {token  && (
+          <>
+            <Route path='/' element={<Posts/>}/>
+            <Route path='/post-blog' element={<Blog/>}/>
+            <Route path='/blog/:slug' element={<BlogPage/>}/>
+            <Route path='/users/:userId' element={<Account/>}/>
+          </>
+        )}
+        <Route path='/login' element={<Login/>}/>
+        <Route path='/register' element={<Register/>}/>
         <Route path='*' element={<NotFound/>}/>
       </Routes>
     </>

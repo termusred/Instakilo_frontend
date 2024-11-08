@@ -5,23 +5,18 @@ import api from "../../../utils/axios";
 import { toast  , ToastContainer} from "react-toastify";
 
 function Blog() {
-    const [title, setTitle] = useState("");
-    const [content, setContent] = useState("");
     const [media, setMedia] = useState([]);    
 
     const navigate = useNavigate()
 
-    const PostToDb = async () => {
-        const trimmedTitle = title.trim()
-        const trimmedContent = content.trim()
-
-        if(trimmedContent == "" || trimmedTitle == ""){
-            toast.error("bro you dumb? You cant use blank space as title nor content")
-            return;
-        }
+    const PostToDb = async (title , content) => {
     
         try {
             const token = localStorage.getItem("token");
+            if(!token){
+                console.log("JWT token not found");
+                return;
+              }
             const formData = new FormData();
             formData.append("title", title);
             formData.append("content", content);
@@ -51,12 +46,10 @@ function Blog() {
     
     function postThisShit(e) {
         e.preventDefault();
-        setTitle(e.target[0].value.trim());
-        setContent(e.target[1].value.trim());
         if (e.target[2].files.length > 0) {
             setMedia(Array.from(e.target[2].files));
         }
-        PostToDb();
+        PostToDb(e.target[0].value , e.target[1].value);
     }
     
     

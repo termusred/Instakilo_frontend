@@ -103,8 +103,17 @@ export function Register() {
               }
             />
           </div>
-          <Button color="gray" size="lg" className="mt-6" fullWidth type="submit">
+          <Button color="outline" size="lg" className="mt-6" fullWidth type="submit">
             Jonatish
+          </Button>
+          <Button
+            variant="outlined"
+            size="lg"
+            className="mt-6 flex h-12 items-center justify-center gap-2"
+            fullWidth
+            onClick={() => navigate("/login")}
+          >
+            Akkauntga kirish
           </Button>
         </form>
       </div>

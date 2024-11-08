@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
+import api from "../../../utils/axios";
 import {useNavigate} from "react-router-dom"
 import { Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
   Navbar,
   Collapse,
@@ -19,9 +21,31 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 
 function Section() {
   const [open, setOpen] = React.useState(false);
+  const [user , setUser] = useState()
   const handleOpen = () => setOpen((cur) => !cur);
   const navigate = useNavigate()
 
+  const GetID = async() =>{
+    try {
+      const token = localStorage.getItem("token");
+      if(!token){
+        navigate("/register")
+        return;
+      }
+      const response = await api.get(`/userId`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      setUser(response.data)
+    } catch (error) {
+      
+    }
+  }
+
+  useEffect(()=>{
+    GetID()
+  },[])
 
   React.useEffect(() => {
     window.addEventListener(
@@ -29,6 +53,7 @@ function Section() {
       () => window.innerWidth >= 960 && setOpen(false),
     );
   }, []);
+
   return (
     <>
       <Navbar shadow={false} fullWidth className="border-0 fixed z-10">
@@ -41,7 +66,7 @@ function Section() {
               <RectangleStackIcon className="h-5 w-5"/>
               Posts
             </Link>
-            <Link to="/account" className="text-black flex">
+            <Link to={`/users/${user}`} className="text-black flex">
               <UserCircleIcon className="h-5 w-5"/>
               Account
             </Link>
@@ -75,7 +100,7 @@ function Section() {
               <RectangleStackIcon className="h-5 w-5"/>
               Posts
             </Link>
-            <Link to="/account" className="text-black flex">
+            <Link to="/users/" className="text-black flex">
               <UserCircleIcon className="h-5 w-5"/>
               Account
             </Link>
