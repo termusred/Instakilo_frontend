@@ -19,6 +19,7 @@ function Account() {
   const [account , setAccount] = useState([])
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [usToken , setUsToken] = useState()
   
   const {userId} = useParams()
   const token = localStorage.getItem("token")
@@ -56,11 +57,24 @@ function Account() {
       console.error(error);
     }
   }
+  const GetByToken = async () => {
+    try {
+      const response = await api.get(`/userToken` , {
+        headers:{
+          Authorization : `Bearer ${token}`
+        }
+      })
+      setUsToken([response.data.data]);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   useEffect(() => {
     setTimeout(() => {
       fetchPosts()
-      GetUser().finally(() => setLoading(false));
+      GetUser()
+      GetByToken().finally(() => setLoading(false));
     }, 1000);
   }, []);
 
@@ -83,13 +97,17 @@ function Account() {
                 <div className="actions flex gap-7 items-center">
                   <h2 className="username">{el.username}</h2>
                   <button className="subscribe bg-blue-600 p-2 rounded">change</button>
-                  <button className="dop bg-red-600 p-2 rounded text-white" onClick={(e)=> {
-                    e.stopPropagation()
-                    if(window.confirm("Do you want to log out?")){
-                      localStorage.removeItem("token")
-                      navigate("/register")
+                  {usToken.map((tk)=>{
+                    if(el._id == tk._id){
+                      return <button className="dop bg-red-600 p-2 rounded text-white" onClick={(e)=> {
+                        e.stopPropagation()
+                        if(window.confirm("Do you want to log out?")){
+                          localStorage.removeItem("token")
+                          navigate("/register")
+                        }
+                      }}>Log out</button>
                     }
-                  }}>Log out</button>
+                  })}
                 </div>
               <div className="counters flex gap-8">
                 <h3 className="blogsCount">212 blogs</h3>

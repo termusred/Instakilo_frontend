@@ -60,7 +60,7 @@ const BlogPage = () => {
     <div className="w-screen flex flex-col mt-20">
       {loading && <Loader />}
       {blog.map((post) => (
-        <div className="flex flex-col overflow-scroll items-center">
+        <div className="flex flex-col overflow-scroll items-center gap-4">
         
               <div className="w-full h-96 mb-4 overflow-scroll rounded-lg">
                 {post.media[0] ? (
