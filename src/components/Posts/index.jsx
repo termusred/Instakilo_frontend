@@ -63,7 +63,6 @@ function Posts() {
                 )}
               </div>
               <h2 className="text-xl font-semibold mb-4">{post.title}</h2>
-              {post.content.length > 150 ? `${post.content.slice(0, 100)}...` : post.content}
               <button onClick={() => navigate("/blog/" + post.slug)}>Read more</button>
             </li>
           ))}

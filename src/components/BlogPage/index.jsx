@@ -82,7 +82,7 @@ const BlogPage = () => {
                   )
                   })}
               <h2 className="text-xl font-semibold mb-4">{post.title}</h2>
-              <h3 className="w-[90%] p-8">{post.content}</h3>
+              <div dangerouslySetInnerHTML={{__html : post.content}} className="w-1/2"/>
               <div className="flex flex-col gap-4 flex-wrap items-center">
                 {post.comments.map((el)=>{
                     return (
@@ -97,14 +97,13 @@ const BlogPage = () => {
                                 Replys : 
                                 <h4>{el.replysCount}</h4>
                                 <button><LiaReplySolid/></button>
-                                {el.user.map((el)=>{
-                                  return (
-                                    <div className="flex flex-col">
-                                      <span>commented by : {el.username}</span>
-                                      <button onClick={() => navigate("/users/" + el._id)}>Check user profile</button>
-                                    </div>
-                                  )
-                                })}
+                                {el.user?.map((user) => (
+                                  <div key={user._id} className="flex flex-col">
+                                    <span>commented by : {user.username}</span>
+                                    <button onClick={() => navigate("/users/" + user._id)}>Check user profile</button>
+                                  </div>
+                                ))}
+
                             </div>
                         </div>
                     )
