@@ -1,5 +1,5 @@
 import axios from "axios"
 
-const api = axios.create({baseURL : "http://localhost:3000" , headers : {"Content-Type" : "application/json"}})
+const api = axios.create({baseURL : "instakilodatabase-production.up.railway.app" , headers : {"Content-Type" : "application/json"}})
 
 export default api

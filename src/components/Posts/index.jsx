@@ -54,7 +54,7 @@ function Posts() {
               <div className="w-full h-96 mb-4 overflow-hidden rounded-lg">
                 {post.media[0] ? (
                   <img
-                    src={`http://localhost:3000/images/${post.media[0]}`}
+                    src={`instakilodatabase-production.up.railway.app/images/${post.media[0]}`}
                     alt={post.title}
                     className="object-cover w-full h-full"
                   />
