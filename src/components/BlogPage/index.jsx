@@ -65,7 +65,7 @@ const BlogPage = () => {
               <div className="w-full h-96 mb-4 overflow-scroll rounded-lg">
                 {post.media[0] ? (
                   <img
-                  src={`instakilodatabase-production.up.railway.app/images/${post.media[0]}`}
+                  src={`https://instakilodatabase-production.up.railway.app//images/${post.media[0]}`}
                   alt={post.title}
                   className="object-contain w-full h-full"
                   />
